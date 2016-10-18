@@ -35,6 +35,7 @@ ecdf2 = function(x,CI=TRUE) {
 ecdf2(x)
 
 # Simulate some uniform(0,1) data and draw sample paths.
+set.seed(8675309)
 n=10
 ecdf2(runif(n))
 abline(a=0,b=1,lwd=2,col="blue") # add true CDF
@@ -47,13 +48,17 @@ c.ecdf = function(x,F) {
   n <- length(x)
   Fhatn <- (1:n)/n
   ce = Fhatn - F(ox)
-  plot(ox,ce,type="l")
+  plot(ox,ce,type="l",ylim=c(-.2,.2))
   rug(x,ticksize=0.025)
 }
 
 n=10; c.ecdf(runif(n),punif)
 n=100; c.ecdf(runif(n),punif)
 n=1000; c.ecdf(runif(n),punif)
+n=10000; c.ecdf(runif(n),punif)
+n=100000; c.ecdf(runif(n),punif)
+# ECDF converging to CDF -- Glivenko Cantelli says this convergence
+# is almost sure.
 
 # Scale up Fhat-F by sqrt(n)
 c.ecdf = function(x,F) {
@@ -68,9 +73,10 @@ c.ecdf = function(x,F) {
 n=10; c.ecdf(runif(n),punif)
 n=100; c.ecdf(runif(n),punif)
 n=1000; c.ecdf(runif(n),punif)
-n=1000; c.ecdf(runif(n),punif)
-n=1000; c.ecdf(runif(n),punif)
+n=10000; c.ecdf(runif(n),punif)
+n=100000; c.ecdf(runif(n),punif)
 
 # It turns out that sqrt(n)(Fhat -F) converges in distribution
 # to a Gaussian process called a Brownian bridge, or "tied down"
 # Brownian motion. (Notice how the process is always 0 at x=0 and 1.)
+# What does this mean? 
