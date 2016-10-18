@@ -17,15 +17,60 @@ ee(.6) - ee(.4)
 # Draw our own and add nonparametric confidence band. Adapted from R
 # code on author's website:
 # http://www.stat.cmu.edu/~larry/all-of-statistics/=Rprograms/edf.r
-ox <- sort(x) # ordered x
-n <- length(x)
-Fhatn <- (1:n)/n
-plot(odat,Fn,type="l")
-alpha <- 0.05
-eps <- sqrt(log(2/alpha)/(2*n))
-print(eps)
-upper <- pmin(Fhatn + eps,1)
-lower <- pmax(Fhatn - eps,0)
-lines(ox,upper,type="s",lwd=2,col=2,lty=2)
-lines(ox,lower,type="s",lwd=2,col=2,lty=2)
-rug(x,ticksize=.025)
+ecdf2 = function(x,CI=TRUE) {
+  ox <- sort(x) # ordered x
+  n <- length(x)
+  Fhatn <- (1:n)/n
+  plot(ox,Fhatn,type="l")
+  rug(x,ticksize=0.025)
+  if(CI) {
+    alpha <- 0.05
+    eps <- sqrt(log(2/alpha)/(2*n))
+    upper <- pmin(Fhatn + eps,1)
+    lower <- pmax(Fhatn - eps,0)
+    lines(ox,upper,type="s",lwd=2,col=2,lty=2)
+    lines(ox,lower,type="s",lwd=2,col=2,lty=2)
+  }
+}
+ecdf2(x)
+
+# Simulate some uniform(0,1) data and draw sample paths.
+n=10
+ecdf2(runif(n))
+abline(a=0,b=1,lwd=2,col="blue") # add true CDF
+n=100; ecdf2(runif(n)); abline(a=0,b=1,lwd=2,col="blue") 
+n=1000; ecdf2(runif(n)); abline(a=0,b=1,lwd=2,col="blue") 
+
+# Centre ECDFs by true CDF
+c.ecdf = function(x,F) {
+  ox <- sort(x)
+  n <- length(x)
+  Fhatn <- (1:n)/n
+  ce = Fhatn - F(ox)
+  plot(ox,ce,type="l")
+  rug(x,ticksize=0.025)
+}
+
+n=10; c.ecdf(runif(n),punif)
+n=100; c.ecdf(runif(n),punif)
+n=1000; c.ecdf(runif(n),punif)
+
+# Scale up Fhat-F by sqrt(n)
+c.ecdf = function(x,F) {
+  ox <- sort(x)
+  n <- length(x)
+  Fhatn <- (1:n)/n
+  ce = sqrt(n) *(Fhatn - F(ox))
+  plot(ox,ce,type="l",ylim=c(-1,1))
+  rug(x,ticksize=0.025)
+}
+
+n=10; c.ecdf(runif(n),punif)
+n=100; c.ecdf(runif(n),punif)
+n=1000; c.ecdf(runif(n),punif)
+n=1000; c.ecdf(runif(n),punif)
+n=1000; c.ecdf(runif(n),punif)
+
+# It turns out that sqrt(n)(Fhat -F) converges in distribution
+# to a Gaussian process called a Brownian bridge, or "tied down"
+# Brownian motion. (Notice how the process is always 0 at x=0 and 1.)
