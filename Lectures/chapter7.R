@@ -14,8 +14,9 @@ abline(h=ee(.5))
 
 ee(.6) - ee(.4)
 
-# Draw our own and add pointwise CIs. Adapted from code on author's website:
-#    http://www.stat.cmu.edu/~larry/all-of-statistics/=Rprograms/edf.r
+# Draw our own and add nonparametric confidence band. Adapted from R
+# code on author's website:
+# http://www.stat.cmu.edu/~larry/all-of-statistics/=Rprograms/edf.r
 ox <- sort(x) # ordered x
 n <- length(x)
 Fhatn <- (1:n)/n
