@@ -41,8 +41,10 @@ ecdf2(runif(n))
 abline(a=0,b=1,lwd=2,col="blue") # add true CDF
 n=100; ecdf2(runif(n)); abline(a=0,b=1,lwd=2,col="blue") 
 n=1000; ecdf2(runif(n)); abline(a=0,b=1,lwd=2,col="blue") 
+n=10000; ecdf2(runif(n)); abline(a=0,b=1,lwd=2,col="blue") 
+# ECDF getting closer to true CDF as n increases. 
 
-# Centre ECDFs by true CDF
+# Centre ECDFs by true CDF to focus on differences.
 c.ecdf = function(x,F) {
   ox <- sort(x)
   n <- length(x)
@@ -58,9 +60,10 @@ n=1000; c.ecdf(runif(n),punif)
 n=10000; c.ecdf(runif(n),punif)
 n=100000; c.ecdf(runif(n),punif)
 # ECDF converging to CDF -- Glivenko Cantelli says this convergence
-# is almost sure.
+# is uniform and almost sure.
 
-# Scale up Fhat-F by sqrt(n)
+# Scale up Fhat-F by sqrt(n); sqrt(n)(Fhat-F) is called the 
+# empirical process.
 c.ecdf = function(x,F) {
   ox <- sort(x)
   n <- length(x)
@@ -76,7 +79,7 @@ n=1000; c.ecdf(runif(n),punif)
 n=10000; c.ecdf(runif(n),punif)
 n=100000; c.ecdf(runif(n),punif)
 
-# It turns out that sqrt(n)(Fhat -F) converges in distribution
+# Donsker's Theorem says that the empirical process "converges in distribution"
 # to a Gaussian process called a Brownian bridge, or "tied down"
 # Brownian motion. (Notice how the process is always 0 at x=0 and 1.)
-# What does this mean? 
+# What does convergence of stochastic processes mean? 
