@@ -1,4 +1,3 @@
-
 # Plot ECDF of example from notes
 ee <- ecdf(c(5,3,7))
 plot(ee)
@@ -14,6 +13,7 @@ abline(h=ee(.5))
 
 ee(.6) - ee(.4)
 
+#-------------------------------------------------------
 # Draw our own and add nonparametric confidence band. Adapted from R
 # code on author's website:
 # http://www.stat.cmu.edu/~larry/all-of-statistics/=Rprograms/edf.r
@@ -34,6 +34,7 @@ ecdf2 = function(x,CI=TRUE) {
 }
 ecdf2(x)
 
+#-------------------------------------------------------
 # Simulate some uniform(0,1) data and draw sample paths.
 set.seed(8675309)
 n=10
@@ -44,6 +45,7 @@ n=1000; ecdf2(runif(n)); abline(a=0,b=1,lwd=2,col="blue")
 n=10000; ecdf2(runif(n)); abline(a=0,b=1,lwd=2,col="blue") 
 # ECDF getting closer to true CDF as n increases. 
 
+#-------------------------------------------------------
 # Centre ECDFs by true CDF to focus on differences.
 c.ecdf = function(x,F) {
   ox <- sort(x)
@@ -59,9 +61,10 @@ n=100; c.ecdf(runif(n),punif)
 n=1000; c.ecdf(runif(n),punif)
 n=10000; c.ecdf(runif(n),punif)
 n=100000; c.ecdf(runif(n),punif)
-# ECDF converging to CDF -- Glivenko Cantelli says this convergence
+# ECDF converging to CDF. Glivenko-Cantelli Theorem says this convergence
 # is uniform and almost sure.
 
+#-------------------------------------------------------
 # Scale up Fhat-F by sqrt(n); sqrt(n)(Fhat-F) is called the 
 # empirical process.
 c.ecdf = function(x,F) {
