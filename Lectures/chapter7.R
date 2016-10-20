@@ -2,7 +2,7 @@
 ee <- ecdf(c(5,3,7))
 plot(ee)
 
-# Now plot ECDF for nerve data from text
+# Now plot ECDF for nerve data (example 7.2) from text
 x <- scan("http://www.stat.cmu.edu/~larry/all-of-statistics/=data/nerve.dat")
 ee <- ecdf(x)
 plot(ee)
