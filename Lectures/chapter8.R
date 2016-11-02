@@ -1,11 +1,10 @@
 # bootstrap variance estimation for a median
 # Simulate some binary data:
-set.seed(1)
+set.seed(1) # repeat yourself for a different random seed
 n = 20
 p = .3
 x <- rbinom(n=n,size=1,prob=p)
 x
-pobs = mean(x) # proportion in "bootstrap" population
 T <- median(x)
 T
 # Using R's default algorithm for the median, the median of 20
@@ -26,7 +25,8 @@ VF = sum((Tsuppt-EF)^2*Tprobs)
 VF
 
 # For the bootstrap, we take the sample as the population. In this
-# population, the observed proportion, pboot, is the "true" p.
+# population, the observed proportion, pobs, is the "true" p.
+pobs = mean(x) # proportion in "bootstrap" population
 p0boot = pbinom(9,size=20,prob=pobs)
 # the chance that a boostrap sample's median is 0.5 is
 p0.5boot = dbinom(10,size=20,prob=pobs)
