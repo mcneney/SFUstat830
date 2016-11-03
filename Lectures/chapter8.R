@@ -1,8 +1,8 @@
 # bootstrap variance estimation for a median
 # Simulate some binary data:
 set.seed(1) # repeat yourself for a different random seed
-n = 20
-p = .3
+n = 20 
+p = .4
 x <- rbinom(n=n,size=1,prob=p)
 x
 T <- median(x)
@@ -12,11 +12,11 @@ T
 # there are 10 1's and 1 if there are 11 or more 1's. The number
 # of 1's in a sample is binomial with success probability p.
 # The chance that a sample's median is 0 is
-p0 = pbinom(9,size=20,prob=p)
+p0 = pbinom(n/2-1,size=n,prob=p)
 # the chance that a sample's median is 0.5 is
-p0.5 = dbinom(10,size=20,prob=p)
+p0.5 = dbinom(n/2,size=n,prob=p)
 # and the chance of 1 is
-p1 = 1-pbinom(10,size=20,prob=p)
+p1 = 1-pbinom(n/2,size=n,prob=p)
 # Variance of T under F:
 Tprobs <- c(p0,p0.5,p1)
 Tsuppt <-c(0,0.5,1)
@@ -27,17 +27,17 @@ VF
 # For the bootstrap, we take the sample as the population. In this
 # population, the observed proportion, pobs, is the "true" p.
 pobs = mean(x) # proportion in "bootstrap" population
-p0boot = pbinom(9,size=20,prob=pobs)
+p0boot = pbinom(n/2-1,size=n,prob=pobs)
 # the chance that a boostrap sample's median is 0.5 is
-p0.5boot = dbinom(10,size=20,prob=pobs)
+p0.5boot = dbinom(n/2,size=n,prob=pobs)
 # and the chance of 1 is
-p1boot = 1-pbinom(10,size=20,prob=pobs)
+p1boot = 1-pbinom(n/2,size=n,prob=pobs)
 # Variance of T under F-hat_{T_n}:
 Tprobsboot <- c(p0boot,p0.5boot,p1boot)
 EFhat = sum(Tsuppt*Tprobsboot)
 VFhat = sum((Tsuppt-EFhat)^2*Tprobsboot)
-VFhat
-VFhat - VF
+VFhat # compare to VF:
+VF
 
 # In more complex problems, we would not be able to determine 
 # the distribution of T under Fhat, so we might estimate it 
@@ -55,6 +55,9 @@ B = 1000
 Tboot = boot(B,x)
 table(Tboot)/B
 vboot = var(Tboot)
-vboot - VFhat
+vboot 
+# compare to VFhat
+VFhat
 # already small compared to the difference between VF and VFhat
-VFhat - VF
+VF
+
