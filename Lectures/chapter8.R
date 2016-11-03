@@ -62,3 +62,29 @@ VFhat
 # already small compared to the difference between VF and VFhat
 VF
 
+# bootstrap confidence intervals
+# Use the LSAT/GPA data from the text
+LSAT<- c(576,635,558,578,666,580,555,661,
+         651,605,653,575,545,572,594)
+GPA <- c(3.39,3.30,2.81,3.03,3.44,3.07,3.00,3.43,
+         3.36,3.13,3.12,2.74,2.76,2.88,2.96) # last entry was typo in text
+dat = data.frame(LSAT,GPA)
+rm(LSAT,GPA)
+T = with(dat,cor(LSAT,GPA))
+
+B = 1000
+Tboot = vector(length=B)
+for(i in 1:B) {
+  inds = sample(1:nrow(dat),replace=TRUE)
+  bdat = dat[inds,]
+  Tboot[i] = with(bdat,cor(LSAT,GPA))
+}
+hist(Tboot)
+# 1. Normal interval
+c(T-sd(Tboot)*qnorm(0.975),T+sd(Tboot)*qnorm(0.975))
+# or could truncate upper limit to 1
+# 2. Pivot interval
+qH = quantile(Tboot-T,probs=c(.975,.025))
+T-qH
+# 3. Quantile interval
+quantile(Tboot,probs=c(.025,.975))
