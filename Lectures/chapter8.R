@@ -36,7 +36,8 @@ p1boot = 1-pbinom(n/2,size=n,prob=pobs)
 Tprobsboot <- c(p0boot,p0.5boot,p1boot)
 EFhat = sum(Tsuppt*Tprobsboot)
 VFhat = sum((Tsuppt-EFhat)^2*Tprobsboot)
-VFhat # compare to VF:
+VFhat 
+# compare to VF:
 VF
 
 # In more complex problems, we would not be able to determine 
