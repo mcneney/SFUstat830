@@ -86,5 +86,19 @@ c(T-sd(Tboot)*qnorm(0.975),T+sd(Tboot)*qnorm(0.975))
 # 2. Pivot interval
 qH = quantile(Tboot-T,probs=c(.975,.025))
 T-qH
-# 3. Quantile interval
+# 3. Percentile interval
 quantile(Tboot,probs=c(.025,.975))
+
+# Bootstrap failure
+n=1000 # large n
+B = 1000
+xnstar = vector(length=B)
+x = runif(n)
+xn = max(x)
+for(j in 1:B) {
+  xnstar[j] = max(sample(x,size=n,replace=TRUE))
+}
+xx = sort(xnstar)-xn
+plot(xx,(1:B)/B,type="l") 
+lines(xx,(1+xx)^n,col="red")
+# repeat for n = 10000
