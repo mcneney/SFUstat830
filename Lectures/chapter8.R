@@ -100,5 +100,5 @@ for(j in 1:B) {
 }
 xx = sort(xnstar)-xn
 plot(xx,(1:B)/B,type="l") 
-lines(xx,(1+xx)^n,col="red")
-# repeat for n = 10000
+xgrid = seq(from=min(xx),to=max(xx),length=100)
+lines(xgrid,(1+xgrid)^n,col="red")
