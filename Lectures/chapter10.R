@@ -104,3 +104,10 @@ Nsim = 1000
 system.time({out = runsim.parboot(Nsim,mean=0)})# about 45 sec
 hist(out$pvals,nclass=30) # much more uniform than the ML approaches
 mean(out$pvals <= 0.05) # about right
+
+
+# Other things to try: 
+# - What happens to ML as the sample size increases?
+# - What if the data-generating distribution was not normal?
+#   Then how would the parametric bootstrap work? 
+#   Would nonparametric bootstrap work?
