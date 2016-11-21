@@ -7,16 +7,14 @@ n = 50
 simdat = function(n,mean,sd=1) {
   return(rnorm(n,mean=mean,sd=sd))
 }
-
-teststat = function(x,sd=1) {
+teststat = function(x,null=0,sd=1) {
   xbar = mean(x); n = length(x)
-  return(xbar/(sd/sqrt(n))) # testing H_0: mean=0, vs H_1: mean not= 0
+  return((xbar-null)/(sd/sqrt(n))) 
 }
 pval = function(t) {
   return(2*pnorm(-abs(t)))
 }
 
-Nsim = 10000
 runsim = function(Nsim,mean) {
   tt = pp = vector(length=Nsim)
   for(i in 1:Nsim) {
@@ -47,5 +45,40 @@ out = runsim(Nsim,mean=.5); hist(out$pvals,nclass=30)
 # \sigma^2 is approximately normal with mean \sigma^2 and
 # variance that is estimated by the lower-right element of
 # [-\ddot\l(\hat\theta)]^{-1} = \hat\sigma^4/n (WHY?).
-
-
+# The test statistic is now (\hat\sigma^2-1)/\sqrt{\hat\sigma^4/n}
+teststat = function(x,null=1) {
+  n = length(x); ss = var(x)*(n-1)/n
+  return((ss-null)/(ss/sqrt(n))) # testing H_0: sigma^2=1, vs H_1: sigma^2 not= 1
+}
+out = runsim(Nsim,mean=0) # doesn't matter what mean is
+hist(out$teststats,nclass=30) # distribution is skewed
+hist(out$pvals,nclass=30) 
+# p-value distribution doesn't look uniform, test is anti-conservative
+mean(out$pvals<=0.05) # size of about 0.19 > 0.05
+#-----------------------------------------------------------------#
+# (2) parametric bootstrap
+# We generate a bootstrap distribution for the test statistic by sampling from 
+# N(\hat\mu,\hat\sigma^2).
+parboot.pval = function(x,Nboot=1000) {
+  xbar = mean(x); n = length(x); ss = var(x)*(n-1)/n
+  tt = teststat(x,null=1)
+  tstar = vector(length=Nboot)
+  for(j in 1:Nboot) {
+    xstar = simdat(n,xbar,sqrt(ss))
+    tstar[j] = teststat(xstar,null=ss) # in bootstrap world, \hat\sigma^2 is truth
+  }
+  pp = mean((tstar>=abs(tt)) | (tstar<= (-abs(tt))))
+  return(pp)
+}
+runsim.parboot = function(Nsim,mean) {
+  pp = vector(length=Nsim)
+  for(i in 1:Nsim) {
+    dat = simdat(n,mean=mean)
+    pp[i] = parboot.pval(dat)
+  }
+  return(list(pvals = pp))
+}
+Nsim = 1000
+system.time({out = runsim.parboot(Nsim,mean=0)})# about 45 sec
+hist(out$pvals,nclass=30)
+mean(out$pvals <= 0.05) # about right
