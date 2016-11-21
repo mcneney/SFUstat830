@@ -38,8 +38,8 @@ out = runsim(Nsim,mean=.4); hist(out$pvals,nclass=30)
 out = runsim(Nsim,mean=.5); hist(out$pvals,nclass=30)
 
 
-# Test the null hypothesis that the variance is 1 by (i) ML,
-# (ii) parametric bootstrap, and (iii) nonparametric bootstrap.
+# Test the null hypothesis that the variance is 1 by (i) ML, and
+# (ii) parametric bootstrap.
 # 1. ML
 # We saw in class that the MLE \hat\sigma^2 of the variance 
 # \sigma^2 is approximately normal with mean \sigma^2 and
@@ -48,13 +48,29 @@ out = runsim(Nsim,mean=.5); hist(out$pvals,nclass=30)
 # The test statistic is now (\hat\sigma^2-1)/\sqrt{\hat\sigma^4/n}
 teststat = function(x,null=1) {
   n = length(x); ss = var(x)*(n-1)/n
-  return((ss-null)/(ss/sqrt(n))) # testing H_0: sigma^2=1, vs H_1: sigma^2 not= 1
+  return((ss-null)/(ss/sqrt(n))) 
 }
 out = runsim(Nsim,mean=0) # doesn't matter what mean is
 hist(out$teststats,nclass=30) # distribution is skewed
 hist(out$pvals,nclass=30) 
 # p-value distribution doesn't look uniform, test is anti-conservative
 mean(out$pvals<=0.05) # size of about 0.19 > 0.05
+# Also tried using the null value of \sigma^2  when calculating the SE of
+# \hat\sigma^2. That is, calculate the SE under \theta=(\bar{X}_n,\sigma^2),
+# where \sigma^2 is the hypothesized value.
+# Can show that under (\bar{X}_n,\sigma^2) the variance of \hat\sigma^2 is 
+# (2 \sigma^6)/n * {2\hat\sigma^2 - \sigma^2}^{-1}
+teststat = function(x,null=1) {
+  n = length(x); ss = var(x)*(n-1)/n
+  se = sqrt(2*null^3/(n*(2*ss-null))) # var can be <0 so sqrt can be NaN
+  return((ss-null)/se) 
+}
+out = runsim(Nsim,mean=0)
+hist(out$teststats,nclass=30)
+hist(out$pvals,nclass=30) # distribution is non-uniform
+mean(out$pvals<=0.05,na.rm=TRUE) # size of about 0.19 > 0.05
+# Less bias in the test, but a very strange p-value distribution.
+
 #-----------------------------------------------------------------#
 # (2) parametric bootstrap
 # We generate a bootstrap distribution for the test statistic by sampling from 
@@ -78,7 +94,13 @@ runsim.parboot = function(Nsim,mean) {
   }
   return(list(pvals = pp))
 }
+# Revert to the first test statistic, which didn't have problems with 
+# taking square-root of negative variances.
+teststat = function(x,null=1) {
+  n = length(x); ss = var(x)*(n-1)/n
+  return((ss-null)/(ss/sqrt(n))) 
+}
 Nsim = 1000
 system.time({out = runsim.parboot(Nsim,mean=0)})# about 45 sec
-hist(out$pvals,nclass=30)
+hist(out$pvals,nclass=30) # much more uniform than the ML approaches
 mean(out$pvals <= 0.05) # about right
