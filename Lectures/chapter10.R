@@ -140,3 +140,23 @@ mean(out$pvals <= 0.05) # about right
 # - What if the data-generating distribution was not normal?
 #   Then how would the parametric bootstrap work? 
 #   Would nonparametric bootstrap work?
+#-----------------------------------------------------------------#
+#-----------------------------------------------------------------#
+# Permutation testing, with simulated data
+set.seed(1)
+n1 = 25; n2 = 25
+mu1 = -.5; mu2 = .5
+x = c(rnorm(n1,mu1),rnorm(n2,mu2))
+d = c(rep(1,n1),rep(2,n2))
+teststat = function(x,d) {
+  return(t.test(x[d==1],x[d==2])$statistic)
+}
+obs = teststat(x,d)
+
+B = 1000
+tvec = vector(length=B)
+for(i in 1:B) {
+  tvec[i] = teststat(x,sample(d))
+}
+hist(tvec,nclass=30,xlim=c(-4,4))
+abline(v=obs)
