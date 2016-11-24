@@ -160,3 +160,23 @@ for(i in 1:B) {
 }
 hist(tvec,nclass=30,xlim=c(-4,4))
 abline(v=obs)
+#-----------------------------------------------------------------#
+#-----------------------------------------------------------------#
+# BH method for controlling FDR
+# Example similar to Example 10.27 of text, but using the
+# adjustment for possibly dependend p-values.
+m = 6; alpha = 0.10 
+Cm = sum(1/(1:m))
+ll = (1:m)*alpha/(Cm*m)
+pp = c(0.009,0.010,0.03,0.035,0.040,0.05)
+plot(pp,ylab="p-values",ylim=c(0,0.05))
+lines(ll,type="l")
+R = max((1:m)[pp<ll])
+points(pp[1:R],col="red",pch=16)
+
+# What if the last p-value was below the l-threshold?
+pp[6] = 0.0401
+plot(pp,ylab="p-values",ylim=c(0,0.06))
+lines(ll,type="l")
+R = max((1:m)[pp<ll])
+points(pp[1:R],col="red",pch=16)
